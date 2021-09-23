@@ -1,0 +1,27 @@
+.login {
+	width: 100vw;
+	height: 100vh;
+	position: relative;
+}
+.form {
+	width: 350px;
+	background-color: rgba(244, 244, 244, 0.6);
+	box-sizing: border-box;
+	padding: 32px;
+
+	position: absolute;
+	right: 250px;
+	top: 150px;
+}
+.form-input {
+	margin: 0 0 10px 0;
+}
+.form-footer {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 20px 0;
+}
+.form-button {
+	width: 250px;
+	padding: 0 !important;
+}
