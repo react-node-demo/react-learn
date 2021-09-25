@@ -4,6 +4,6 @@ export const getUserInfo = params => {
 	return request({
 		url: `/v1/getUserInfo`,
 		method: "get",
-		params: params
+		data: params
 	});
 };

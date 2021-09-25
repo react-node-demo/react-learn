@@ -37,3 +37,10 @@ export const loginWithPassword = params => {
 		data: params
 	});
 };
+
+export const refreshToken = refreshToken => {
+	return request({
+		url: `/v1/refreshToken/${refreshToken}`,
+		method: "get"
+	});
+};

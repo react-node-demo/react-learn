@@ -9,6 +9,8 @@ import HeaderNav from "@/components/sandbox/HeaderNav/index";
 import Home from "@/views/sandbox/home/index";
 import UserList from "@/views/sandbox/user-manage/user-list/index";
 import RoleList from "@/views/sandbox/right-manage/role-list/index";
+import RightList from '@/views/sandbox/right-manage/right-list/index'
+import BookList from "@/views/sandbox/book-manage/book-list";
 
 import { getUserInfo } from "@/assets/api/index";
 
@@ -23,7 +25,7 @@ export default function NewsSandBox(props) {
 		getUserInfo().then(res => {
 			let data = res.data;
 
-			console.log(data)
+			console.log(data);
 
 			if (data.success) {
 				let result = data.body;
@@ -36,6 +38,7 @@ export default function NewsSandBox(props) {
 	const logout = () => {
 		localStorage.removeItem("token");
 		localStorage.removeItem("refresh_token");
+		localStorage.removeItem("expiresTime");
 
 		props.history.replace({
 			pathname: "/login"
@@ -48,7 +51,7 @@ export default function NewsSandBox(props) {
 
 			<Layout className="site-layout">
 				<HeaderNav userInfo={userInfo} logout={logout}></HeaderNav>
-				
+
 				<Content
 					className="site-layout-background"
 					style={{
@@ -60,12 +63,20 @@ export default function NewsSandBox(props) {
 					<Switch>
 						<Route path="/home" component={props => <Home {...props}></Home>}></Route>
 						<Route
-							path="/user-manage/userlist"
+							path="/user-manage/user/list"
 							component={props => <UserList {...props}></UserList>}
 						></Route>
 						<Route
-							path="/right-manage/rolelist"
+							path="/right-manage/role/list"
 							component={props => <RoleList {...props}></RoleList>}
+						></Route>
+						<Route
+							path="/right-manage/right/list"
+							component={props => <RightList {...props}></RightList>}
+						></Route>
+						<Route
+							path="/book-manage/book/list"
+							component={props => <BookList {...props}></BookList>}
 						></Route>
 
 						<Redirect from="/" to="/home" exact></Redirect>

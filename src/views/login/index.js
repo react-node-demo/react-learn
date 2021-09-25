@@ -30,12 +30,9 @@ export default function Login(props) {
 
 	const selection = (
 		<Select
-			showSearch
 			style={{ width: "100%" }}
 			placeholder="请选择身份"
-			optionFilterProp="children"
 			onChange={value => onInput(value, 3)}
-			filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
 		>
 			<Option value="0">普通用户</Option>
 			<Option value="1">管理员</Option>
@@ -59,7 +56,6 @@ export default function Login(props) {
 				break;
 			case 3:
 				setUserIdentity(e);
-				console.log(`selected ${e}`);
 				break;
 			default:
 				break;
@@ -81,12 +77,12 @@ export default function Login(props) {
 			let data = res.data;
 
 			if (data.success) {
-				const { token, refresh_token } = data.body;
+				const { token, refresh_token, expiresTime } = data.body;
 
 				localStorage.setItem("token", token);
 				localStorage.setItem("refresh_token", refresh_token);
+				localStorage.setItem("expiresTime", expiresTime + new Date().getTime());
 
-				console.log("props: ", props);
 				props.history.push({
 					pathname: "/"
 				});
@@ -206,8 +202,7 @@ export default function Login(props) {
 						<Button
 							className="form-button"
 							style={{
-								backgroundColor:
-									!telphone || !password ? "transparent" : "#1890ff"
+								backgroundColor: !telphone || !password ? "transparent" : "#1890ff"
 							}}
 							type="primary"
 							onClick={login}
