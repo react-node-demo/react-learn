@@ -66,7 +66,7 @@ const validateToken = token => {
 			}
 		});
 
-		console.log("data: ", data);
+		// console.log("data: ", data);
 
 		// //开始时间小于结束时间，代表token还有效
 		if (data.iat < data.exp) {
@@ -107,7 +107,7 @@ const validateRefreshToken = refreshToken => {
 			}
 		});
 
-		console.log("refresh: ", data);
+		// console.log("refresh: ", data);
 
 		//开始时间小于结束时间，代表token还有效
 		if (data.iat < data.exp) {

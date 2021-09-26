@@ -29,14 +29,10 @@ export default function Login(props) {
 	];
 
 	const selection = (
-		<Select
-			style={{ width: "100%" }}
-			placeholder="请选择身份"
-			onChange={value => onInput(value, 3)}
-		>
-			<Option value="0">普通用户</Option>
-			<Option value="1">管理员</Option>
-			<Option value="2">超级管理员</Option>
+		<Select style={{ width: "100%" }} placeholder="请选择身份" onChange={value => onInput(value, 3)}>
+			<Option value="普通用户">普通用户</Option>
+			<Option value="管理员">管理员</Option>
+			<Option value="超级管理员">超级管理员</Option>
 		</Select>
 	);
 
@@ -133,6 +129,8 @@ export default function Login(props) {
 
 		registerWithPassword(params).then(res => {
 			let data = res.data;
+
+			console.log("注册data: ", data);
 
 			if (data.success) {
 				message.success("注册成功");

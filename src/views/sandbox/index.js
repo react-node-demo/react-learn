@@ -9,10 +9,10 @@ import HeaderNav from "@/components/sandbox/HeaderNav/index";
 import Home from "@/views/sandbox/home/index";
 import UserList from "@/views/sandbox/user-manage/user-list/index";
 import RoleList from "@/views/sandbox/right-manage/role-list/index";
-import RightList from '@/views/sandbox/right-manage/right-list/index'
+import RightList from "@/views/sandbox/right-manage/right-list/index";
 import BookList from "@/views/sandbox/book-manage/book-list";
 
-import { getUserInfo } from "@/assets/api/index";
+import { getUserInfo, getMenus } from "@/assets/api/index";
 
 import "./index.css";
 
@@ -33,6 +33,11 @@ export default function NewsSandBox(props) {
 				setUserInfo(result.userInfo);
 			}
 		});
+	}, []);
+
+	useEffect(() => {
+		console.log("获取菜单");
+		getMenus().then(res => {});
 	}, []);
 
 	const logout = () => {
