@@ -2,9 +2,6 @@ import axios from "axios";
 import { refreshToken } from "@/assets/api/login";
 import { message } from "antd";
 
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
-
 const service = axios.create({
 	baseURL: "http://localhost:3001",
 	timeout: 5000
@@ -12,7 +9,6 @@ const service = axios.create({
 
 service.interceptors.request.use(
 	async config => {
-		console.log("cancel: ", source.token);
 		if (localStorage.getItem("token")) {
 			let expriredTime = localStorage.getItem("expiresTime");
 			let currentTime = Date.now();

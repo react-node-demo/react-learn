@@ -11,6 +11,7 @@ import UserList from "@/views/sandbox/user-manage/user-list/index";
 import RoleList from "@/views/sandbox/right-manage/role-list/index";
 import RightList from "@/views/sandbox/right-manage/right-list/index";
 import BookList from "@/views/sandbox/book-manage/book-list";
+import MenuList from "@/views/sandbox/right-manage/menu-list";
 
 import { getUserInfo, getMenus } from "@/assets/api/index";
 
@@ -20,6 +21,7 @@ const { Content } = Layout;
 
 export default function NewsSandBox(props) {
 	const [userInfo, setUserInfo] = useState(null);
+	const [menus, setMenus] = useState([]);
 
 	useEffect(() => {
 		getUserInfo().then(res => {
@@ -37,7 +39,15 @@ export default function NewsSandBox(props) {
 
 	useEffect(() => {
 		console.log("获取菜单");
-		getMenus().then(res => {});
+		getMenus().then(res => {
+			let data = res.data;
+			if (data.success) {
+				const { menus } = data.body;
+
+				setMenus(menus);
+			}
+			console.log("res: ", res)
+		});
 	}, []);
 
 	const logout = () => {
@@ -52,7 +62,7 @@ export default function NewsSandBox(props) {
 
 	return (
 		<Layout>
-			<SideMenu></SideMenu>
+			<SideMenu menus={menus}></SideMenu>
 
 			<Layout className="site-layout">
 				<HeaderNav userInfo={userInfo} logout={logout}></HeaderNav>
@@ -75,6 +85,7 @@ export default function NewsSandBox(props) {
 							path="/right-manage/role/list"
 							component={props => <RoleList {...props}></RoleList>}
 						></Route>
+						<Route path="/right-manage/menu/list" component={props => <MenuList {...props}></MenuList>}></Route>
 						<Route
 							path="/right-manage/right/list"
 							component={props => <RightList {...props}></RightList>}

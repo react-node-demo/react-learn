@@ -12,6 +12,10 @@ const MenuSchema = mongoose.Schema(
 			required: true,
 			unique: true
 		},
+		icon: {
+			type: Object,
+			default: null
+		},
 		parent_id: {
 			type: String,
 			unique: true
