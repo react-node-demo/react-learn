@@ -22,6 +22,7 @@ service.interceptors.request.use(
 
 				if (data.success) {
 					const { token, refresh_token, expiresTime } = data.body;
+
 					localStorage.setItem("token", token);
 					localStorage.setItem("refresh_token", refresh_token);
 					localStorage.setItem("expiresTime", expiresTime + new Date().getTime());
@@ -41,23 +42,17 @@ service.interceptors.request.use(
 		return config;
 	},
 	error => {
-		message.error(error, 3000);
 		Promise.reject(error);
 	}
 );
 
 service.interceptors.response.use(
 	response => {
-		console.log("axios: ", response);
-		const { data } = response;
-
-		switch (data.status) {
-			case 401:
-		}
 		return response; // 这边必须返回返回值，否则promise请求拿到的数据为undefined
 	},
 	error => {
 		console.log(error);
+		return Promise.reject(error);
 	}
 );
 
