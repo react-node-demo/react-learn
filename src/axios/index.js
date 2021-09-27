@@ -34,7 +34,7 @@ service.interceptors.request.use(
 				}
 			}
 
-			config.headers["refresh-token"] = localStorage.getItem("token");
+			config.headers["refresh-token"] = localStorage.getItem("refresh_token");
 			config.headers["Authorization"] = "Bearer " + localStorage.getItem("token");
 		}
 
