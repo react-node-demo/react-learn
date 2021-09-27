@@ -31,7 +31,7 @@ router.get("/v1/getUserInfo", (request, response) => {
                         })
                     }
                 }).catch((err) => {
-                    response.status(500).json({
+                    response.status(200).json({
                         message: err.toString(),
                         code: 500,
                         success: false
@@ -39,9 +39,9 @@ router.get("/v1/getUserInfo", (request, response) => {
                 })
 			})
 			.catch(exception => {
-                response.status(400).json({
-                    message: exception.toString(),
-                    code: 400,
+                response.status(200).json({
+                    message: exception.message.toString(),
+                    code: 401,
                     success: false
                 })
 			});

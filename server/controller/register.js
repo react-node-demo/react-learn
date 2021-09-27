@@ -31,8 +31,9 @@ router.post("/v1/registerWithPassword", async (request, response) => {
 			}
 		})
 		.catch(err => {
-			response.status(500).json({
+			response.status(200).json({
 				message: err.toString(),
+				code: 500,
 				success: false
 			});
 		});

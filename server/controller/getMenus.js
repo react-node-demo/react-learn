@@ -74,12 +74,18 @@ router.post("/v1/getMenus", async (request, response) => {
 				success: true
 			})
 		}).catch((err) => {
-			response.status(500).json({
+			response.status(200).json({
 				message: err.toString(),
-				code: 500,
+				code: 401,
 				success: false
 			})
 		});
+	}).catch((exception) => {
+		response.status(200).json({
+			message: exception.message.toString(),
+			code: 401,
+			success: false
+		})
 	});
 });
 

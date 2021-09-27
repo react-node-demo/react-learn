@@ -47,7 +47,7 @@ const validateToken = token => {
 					let json = {
 						iat: 1,
 						exp: 0,
-						msg: "token过期",
+						message: "token过期",
 						userInfo: jwt.decode(token)
 					};
 					return json;
@@ -56,7 +56,7 @@ const validateToken = token => {
 					let json = {
 						iat: 1,
 						exp: 0,
-						msg: "无效的token",
+						message: "无效的token",
 						userInfo: jwt.decode(token)
 					};
 					return json;
@@ -88,7 +88,7 @@ const validateRefreshToken = refreshToken => {
 					let json = {
 						iat: 1,
 						exp: 0,
-						msg: "token过期",
+						message: "token过期",
 						userInfo: jwt.decode(refreshToken)
 					};
 					return json;
@@ -97,7 +97,7 @@ const validateRefreshToken = refreshToken => {
 					let json = {
 						iat: 1,
 						exp: 0,
-						msg: "无效的token",
+						message: "无效的token",
 						userInfo: jwt.decode(refreshToken)
 					};
 					return json;

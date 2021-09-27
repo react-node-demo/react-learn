@@ -30,8 +30,7 @@ router.post("/v1/loginWithPassword", async (request, response) => {
 				}
 			})
 			.catch(err => {
-				console.log("err: ", err);
-				return response.status(500).json({
+				return response.status(200).json({
 					message: err.toString(),
 					status: 500,
 					success: false

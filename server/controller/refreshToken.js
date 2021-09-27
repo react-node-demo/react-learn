@@ -23,7 +23,7 @@ router.get("/v1/refreshToken/:refreshToken", (request, response) => {
                     })
                 }
             }).catch((err) => {
-                response.status(500).json({
+                response.status(200).json({
                     message: err.toString(),
                     code: 500,
                     success: false
@@ -31,10 +31,9 @@ router.get("/v1/refreshToken/:refreshToken", (request, response) => {
             })
 		})
 		.catch(exception => {
-			return response.status(500).json({
-				message: exception.toString(),
-				code: 500,
-				body: null,
+			return response.status(200).json({
+				message: exception.message.toString(),
+				code: 401,
 				success: false
 			});
 		});
