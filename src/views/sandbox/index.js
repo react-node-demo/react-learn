@@ -14,6 +14,7 @@ import BookList from "@/views/sandbox/book-manage/book-list";
 import MenuList from "@/views/sandbox/right-manage/menu-list";
 
 import { getUserInfo, getMenus } from "@/assets/api/index";
+import { generateMenuTree } from '@/assets/utils/index';
 
 import "./index.css";
 
@@ -38,13 +39,12 @@ export default function NewsSandBox(props) {
 	}, []);
 
 	useEffect(() => {
-		console.log("获取菜单");
 		getMenus().then(res => {
 			let data = res.data;
 			if (data.success) {
 				const { menus } = data.body;
 
-				setMenus(menus);
+				setMenus(generateMenuTree(menus));
 			}
 			console.log("res: ", res)
 		});

@@ -1,6 +1,5 @@
 import React from "react";
 import { Layout, Menu } from "antd";
-import { AppstoreOutlined, SettingOutlined } from "@ant-design/icons";
 import { withRouter } from "react-router-dom";
 
 import "./index.css";
@@ -9,10 +8,7 @@ const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 function SideMenu(props) {
-
 	const { menus } = props;
-
-	console.log("Menu: ", menus)
 
 	const renderMenu = (menus) => {
 		return menus.map((item) => item.children ? <SubMenu key={item.url} title={item.title}>

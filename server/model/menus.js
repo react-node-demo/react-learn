@@ -13,12 +13,24 @@ const MenuSchema = mongoose.Schema(
 			unique: true
 		},
 		icon: {
-			type: Object,
-			default: null
+			type: String,
+			default: ''
 		},
 		parent_id: {
 			type: String,
 			unique: true
+		},
+		component: {
+			type: String,
+			default: ''
+		},
+		visible: {
+			type: Number,
+			default: 1
+		},
+		disabled: {
+			type: Number,
+			default: 1
 		},
 		createTime: {
 			type: Date,

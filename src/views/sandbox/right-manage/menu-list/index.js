@@ -2,18 +2,101 @@ import React, { useState, useEffect } from "react";
 import { Button, Table, Space, Modal, Form, Input, Switch, Dropdown, Menu, Tag } from "antd";
 import { DownOutlined, DeleteOutlined, AppstoreAddOutlined, EditOutlined } from "@ant-design/icons";
 
+import { getMenus, createMenu, updateMenu } from "@/assets/api/index";
+import { generateMenuTree } from '@/assets/utils/index';
+
 export default function MenuList() {
 	const [modalVisible, setModalViaible] = useState(false);
 	const [modalTitle, setModalTitle] = useState("新增根菜单");
+	const [readOnly, setReadOnly] = useState(false);
 	const [menuItem, setMenuItem] = useState(null);
+	const [editType, setEditType] = useState(0);
+	const [menus, setMenus] = useState([]);
 
-	const onFinish = (values: any) => {
+	let inputMenu = {};
+
+	useEffect(() => {
+		getMenus().then(res => {
+			let data = res.data;
+			if (data.success) {
+				const { menus } = data.body;
+				
+				let menuTree = menus.map((item, index) => {
+					return {
+						key: item.id,
+						id: item.id,
+						parentId: item.parentId,
+						name: item.title,
+						path: item.url,
+						icon: item.icon,
+						component: item.component,
+						visible: item.visible,
+						disabled: item.disabled
+					}
+				})
+				setMenus(generateMenuTree(menuTree));
+			}
+		});
+	}, []);
+
+	const [ form ] = Form.useForm();
+
+	const onFinish = (values) => {
 		console.log("Success:", values);
 	};
 
-	const onFinishFailed = (errorInfo: any) => {
+	const onFinishFailed = (errorInfo) => {
 		console.log("Failed:", errorInfo);
 	};
+
+	const submit = () => {
+		if (!editType) { // 添加根菜单
+			let params = {
+				parentId: 0,
+				name: inputMenu.name,
+				icon: inputMenu.icon,
+				path: inputMenu.path,
+				component: inputMenu.component,
+				visible: inputMenu.visible,
+				disabled: inputMenu.disabled
+			}
+
+			createMenu(params).then((res) => {})
+		}
+
+		if (editType === 1) {	// 添加子菜单
+			let params = {
+				parentId: menuItem.id,
+				name: inputMenu.name,
+				icon: inputMenu.icon,
+				path: inputMenu.path,
+				component: inputMenu.component,
+				visible: inputMenu.visible,
+				disabled: inputMenu.disabled
+			}
+
+			createMenu(params).then((res) => {})
+		}
+
+		if (editType === 2) {	// 编辑菜单
+			let params = {
+				id: menuItem.id,
+				name: inputMenu.name,
+				icon: inputMenu.icon,
+				path: inputMenu.path,
+				component: inputMenu.component,
+				visible: inputMenu.visible,
+				disabled: inputMenu.disabled
+			}
+
+			updateMenu(params).then((res) => {})
+		}
+		setModalViaible(false);
+	}
+
+	const cancel = () => {
+		setModalViaible(false);
+	}
 
 	const changeVisible = value => {
 		console.log("changeVisible: ", value);
@@ -27,7 +110,55 @@ export default function MenuList() {
 		setModalViaible(true);
 		setModalTitle(modalTitleMap[type]);
 		setMenuItem(item);
+		setEditType(type);
 	};
+
+	const inputValue = (e, type) => {
+		switch (type) {
+			case 0:
+				inputMenu.name = e.target.value;
+				break;
+			case 1:
+				inputMenu.path = e.target.value;
+				break;
+			case 2:
+				inputMenu.component = e.target.value;
+				break;
+			case 3:
+				inputMenu.icon = e.target.value;
+				break;
+			case 4:
+				inputMenu.visible = e ? 1 : 0;
+				break;
+			case 5:
+				inputMenu.disabled = e ? 1 : 0;
+				break;
+			default:
+				break;
+		}
+
+		console.log("menuI: ", inputMenu, e)
+	}
+
+	const updateForm = () => {
+		if (menuItem) {
+			form.setFieldsValue(menuItem);
+		} else {
+			form.resetFields();
+		}
+	}
+
+	useEffect(() => {
+		if (editType === 1) {
+			setReadOnly(true)
+		} else {
+			setReadOnly(false)
+		}
+	}, [editType])
+
+	useEffect(() => {
+		updateForm();
+	}, [menuItem]); // 副作用依赖menuItem,当更新完数据后拿到最新的值更新表单
 
 	const columns = [
 		{
@@ -38,7 +169,7 @@ export default function MenuList() {
 		{
 			title: "菜单名称",
 			align: "center",
-			dataIndex: "menuName"
+			dataIndex: "name"
 		},
 		{
 			title: "路径",
@@ -60,11 +191,11 @@ export default function MenuList() {
 		},
 		{
 			title: "状态",
-			dataIndex: "status",
+			dataIndex: "disabled",
 			align: "center",
-			render: text => {
-				let color = text ? "green" : "rgba(144,147,153, 0.5)";
-				let tagText = text ? "启动" : "停止";
+			render: disabled => {
+				let color = disabled ? "green" : "rgba(144,147,153, 0.5)";
+				let tagText = disabled ? "启动" : "停止";
 
 				return <Tag color={color}>{tagText}</Tag>;
 			}
@@ -89,35 +220,7 @@ export default function MenuList() {
 		}
 	];
 
-	const data = [
-		{
-			key: "1",
-			id: "1",
-			name: "系统管理",
-			path: "/system-manage",
-			component: "SystemMenu",
-			visible: 0,
-			status: 0
-		},
-		{
-			key: "2",
-			id: "2",
-			name: "菜单管理",
-			path: "/system-manage/menu-manage",
-			component: "MenuManage",
-			visible: 0,
-			status: 1
-		},
-		{
-			key: "3",
-			id: "3",
-			name: "角色管理",
-			path: "/system-manage/role-manage",
-			component: "RoleManage",
-			visible: 0,
-			status: 1
-		}
-	];
+	const data = menus;
 
 	const renderDropDownMenu = row => {
 		return (
@@ -138,8 +241,10 @@ export default function MenuList() {
 
 	const renderForm = () => {
 		console.log("menuItem: ", menuItem);
+
 		return (
 			<Form
+				form={form}
 				labelCol={{ span: 8 }}
 				wrapperCol={{ span: 16 }}
 				onFinish={onFinish}
@@ -148,23 +253,27 @@ export default function MenuList() {
 				autoComplete="off"
 			>
 				<Form.Item label="菜单名称" name="name" rules={[{ required: true, message: "请输入菜单名称!" }]}>
-					<Input />
+					<Input allowClear readOnly={readOnly} onChange={(e) => inputValue(e, 0)} />
 				</Form.Item>
 
 				<Form.Item label="路径" name="path" rules={[{ required: true, message: "请输入菜单路径!" }]}>
-					<Input />
+					<Input allowClear onChange={(e) => inputValue(e, 1)} />
 				</Form.Item>
 
 				<Form.Item label="组件" name="component">
-					<Input />
+					<Input allowClear onChange={(e) => inputValue(e, 2)} />
 				</Form.Item>
 
-				<Form.Item label="是否隐藏" valuePropName="checked">
-					<Switch />
+				<Form.Item label="icon" name="icon">
+					<Input allowClear onChange={(e) => inputValue(e, 3)} />
 				</Form.Item>
 
-				<Form.Item label="是否启动" valuePropName="checked">
-					<Switch />
+				<Form.Item label="是否隐藏" valuePropName="checked" name="visible">
+					<Switch onChange={(e) => inputValue(e, 4)} />
+				</Form.Item>
+
+				<Form.Item label="是否启动" valuePropName="checked" name="disabled">
+					<Switch onChange={(e) => inputValue(e, 5)} />
 				</Form.Item>
 			</Form>
 		);
@@ -177,12 +286,8 @@ export default function MenuList() {
 			cancelText="取消"
 			okText="提交"
 			visible={modalVisible}
-			onOk={() => {
-				setModalViaible(false);
-			}}
-			onCancel={() => {
-				setModalViaible(false);
-			}}
+			onOk={submit}
+			onCancel={cancel}
 		>
 			{renderForm()}
 		</Modal>

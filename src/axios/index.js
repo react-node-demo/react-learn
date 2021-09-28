@@ -61,6 +61,7 @@ service.interceptors.response.use(
 							window.location.reload();
 						}
 					}).catch((err) => {
+						console.log("异常：", err)
 						localStorage.removeItem("token");
 						localStorage.removeItem("refresh_token");
 						localStorage.removeItem("expiresTime");
@@ -85,7 +86,6 @@ service.interceptors.response.use(
 		return response; // 这边必须返回返回值，否则promise请求拿到的数据为undefined
 	},
 	error => {
-		console.log(error);
 		return Promise.reject(error);
 	}
 );

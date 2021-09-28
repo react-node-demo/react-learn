@@ -9,8 +9,8 @@ const app = express();
 const register = require("./controller/register");
 const refreshToken = require("./controller/refreshToken");
 const login = require("./controller/login");
-const getUserInfo = require("./controller/getUserInfo");
-const getMenus = require("./controller/getMenus");
+const user = require("./controller/user");
+const menus = require("./controller/menus");
 
 // 连接数据库，自动新建 ExpressAuth 库
 mongoose.connect(MONGODB_LINK);
@@ -26,7 +26,7 @@ app.all("*", function (req, res, next) {
 		"Access-Control-Allow-Headers",
 		"Origin,X-Requested-With,Content-Type,Accept,X-File-Name,authorization,refresh-token"
 	);
-	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,PATCH,OPTIONS");
 	res.header("Content-Type", "application/json;charset=utf-8");
 	res.header("X-Powered-By", " 3.2.1");
 	res.header("Cache-Control", "no-store");
@@ -44,9 +44,9 @@ app.use("/", refreshToken);
 // 登录接口
 app.use("/", login);
 // 获取用户信息
-app.use("/", getUserInfo);
+app.use("/", user);
 // 获取菜单
-app.use("/", getMenus);
+app.use("/", menus);
 
 app.listen(3001, () => {
 	console.log("http://localhost:3001");

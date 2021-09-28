@@ -5,8 +5,9 @@ const MenuMapper = {
 		return new Promise((resolve, reject) => {
 			//和之前路由子文件 下面对应 Promise操作修改异步操作 实现同步
 			Menu.find({}, (err, docs) => {
-				const finded = docs.some(item => data.name === item.name); //如果传来的注册账户和数据库中的有相同的
+				const finded = docs.some(item => data.title === item.title); //如果传来的注册账户和数据库中的有相同的
 
+				console.log("插入： ", docs, finded, data)
 				if (finded) {
 					resolve(0);
 				} else {
@@ -14,9 +15,9 @@ const MenuMapper = {
 
 					menuEnity.save(err => {
 						if (err) {
-							resolve(1);
+							reject(err);
 						} else {
-							reject(false);
+							resolve(1);
 						}
 					});
 				}
@@ -68,16 +69,20 @@ const MenuMapper = {
 	update: data => {
 		return new Promise((resolve, reject) => {
 			// 根据id查找对应用户，并修改对应内容
-			Menu.findById(data.id, (err, doc) => {
-				doc = data;
+			let query = {
+				_id: data.id
+			};
+			let updateData = {};
 
-				doc.save(err => {
-					if (err) {
-						resolve(false);
-					} else {
-						reject(true);
-					}
-				});
+			for (let i in data) {
+				if (i.indexOf('id') === -1) {
+					updateData[i] = data[i]
+				}
+			}
+			Menu.findOneAndUpdate(query, {
+				$set: updateData
+			}, {}, (err, res) => {
+				console.log("err "+ err + " res " + res)
 			});
 		});
 	}
