@@ -3,10 +3,10 @@ import { refreshToken } from "@/assets/api/login";
 import { message } from "antd";
 
 // 是否正在刷新的标记
-let isRefreshing = false
+let isRefreshing = false;
 
 // 重试队列，每一项将是一个待执行的函数形式
-let retryRequests = []
+let retryRequests = [];
 
 const service = axios.create({
 	baseURL: "http://localhost:3001",
@@ -36,53 +36,56 @@ service.interceptors.response.use(
 			case 401:
 				if (!isRefreshing) {
 					isRefreshing = true;
-					
-					return refreshToken(localStorage.getItem("refresh_token")).then((res) => {
-						let data = res.data;
 
-						if (data.success) {
-							const { token, refresh_token, expiresTime } = data.body;
-							
-							localStorage.setItem("token", token);
-							localStorage.setItem("refresh_token", refresh_token);
-							localStorage.setItem("expiresTime", expiresTime + new Date().getTime());
+					return refreshToken(localStorage.getItem("refresh_token"))
+						.then(res => {
+							let data = res.data;
 
-							//遍历缓存队列 发起请求 传入最新token
-							retryRequests.forEach((cb) => cb(token, refresh_token));
-							// 重试完清空这个队列
-							retryRequests = [];
+							console.log("刷新token: ", data);
 
-							return service(config);
-						} else {
-							localStorage.removeItem("token");
-							localStorage.removeItem("refresh_token");
-							localStorage.removeItem("expiresTime");
+							if (data.success) {
+								const { token, refresh_token, expiresTime } = data.body;
 
-							window.location.reload();
-						}
-					}).catch((err) => {
-						console.log("异常：", err)
-						localStorage.removeItem("token");
-						localStorage.removeItem("refresh_token");
-						localStorage.removeItem("expiresTime");
+								localStorage.setItem("token", token);
+								localStorage.setItem("refresh_token", refresh_token);
+								localStorage.setItem("expiresTime", expiresTime + new Date().getTime());
 
-						window.location.reload();
-					}).finally(() => {
-						isRefreshing = false;
-					})
+								//遍历缓存队列 发起请求 传入最新token
+								retryRequests.forEach(cb => cb(token, refresh_token));
+								// 重试完清空这个队列
+								retryRequests = [];
+
+								return service(config);
+							} else {
+								localStorage.removeItem("token");
+								localStorage.removeItem("refresh_token");
+								localStorage.removeItem("expiresTime");
+
+								window.location.reload();
+							}
+						})
+						.catch(err => {
+							// 由于存在并发请求多次刷新token的情况，所以异常不退出退出
+							console.log("异常：", err);
+						})
+						.finally(() => {
+							isRefreshing = false;
+						});
 				} else {
-					return new Promise((resolve) => {
+					return new Promise(resolve => {
 						// 将resolve放进队列，用一个函数形式来保存，等token刷新后调用执行
 						retryRequests.push((token, refresh_token) => {
-							config.headers['refresh-token'] = refresh_token;
-							config.headers['Authorization'] = `Bearer ${token}`;
+							config.headers["refresh-token"] = refresh_token;
+							config.headers["Authorization"] = `Bearer ${token}`;
 							resolve(service(config));
 						});
 					});
 				}
 				break;
+			default:
+				break;
 		}
-		
+
 		return response; // 这边必须返回返回值，否则promise请求拿到的数据为undefined
 	},
 	error => {

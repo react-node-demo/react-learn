@@ -12,7 +12,7 @@ export default function RadioTab(props) {
 
 	useEffect(() => {
 		setCurrentIndex(props.activeIndex);
-	}, []);
+	}, [props.activeIndex]);
 
 	return (
 		<Wrapper>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import { Input, Button, message, Select } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";

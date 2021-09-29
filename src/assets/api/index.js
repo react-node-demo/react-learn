@@ -19,15 +19,23 @@ export const getMenus = params => {
 export const createMenu = params => {
 	return request({
 		url: `/v1/createMenu`,
-		method: 'post',
+		method: "post",
 		data: params
-	})
-}
+	});
+};
 
 export const updateMenu = params => {
 	return request({
 		url: `/v1/updateMenu`,
-		method: 'patch',
+		method: "patch",
 		data: params
-	})
-}
+	});
+};
+
+export const deleteMenu = params => {
+	return request({
+		url: `/v1/deleteMenu`,
+		method: "delete",
+		data: params
+	});
+};

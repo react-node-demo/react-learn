@@ -7,7 +7,7 @@ const MenuMapper = {
 			Menu.find({}, (err, docs) => {
 				const finded = docs.some(item => data.title === item.title); //如果传来的注册账户和数据库中的有相同的
 
-				console.log("插入： ", docs, finded, data)
+				console.log("插入： ", docs, finded, data);
 				if (finded) {
 					resolve(0);
 				} else {
@@ -24,18 +24,16 @@ const MenuMapper = {
 			});
 		});
 	},
-	del: data => {
+	delete: data => {
 		return new Promise((resolve, reject) => {
-			//和之前路由子文件 下面对应 Promise操作修改异步操作 实现同步
-			Menu.remove({
-				_id: data.id
-			})
-				.then(user => {
+			Menu.findByIdAndDelete(data.id, (err, res) => {
+				console.log("Menu删除：", err);
+				if (err) {
+					reject(err);
+				} else {
 					resolve(true);
-				})
-				.catch(err => {
-					reject(false);
-				});
+				}
+			});
 		});
 	},
 	queryById: data => {
@@ -72,18 +70,31 @@ const MenuMapper = {
 			let query = {
 				_id: data.id
 			};
-			let updateData = {};
+			let updateData = {
+				modifiedTime: Date.now()
+			};
 
 			for (let i in data) {
-				if (i.indexOf('id') === -1) {
-					updateData[i] = data[i]
+				if (i.indexOf("id") === -1) {
+					updateData[i] = data[i];
 				}
 			}
-			Menu.findOneAndUpdate(query, {
-				$set: updateData
-			}, {}, (err, res) => {
-				console.log("err "+ err + " res " + res)
-			});
+
+			Menu.findOneAndUpdate(
+				query,
+				{
+					$set: updateData
+				},
+				{},
+				(err, res) => {
+					console.log("err " + err + " res " + res);
+					if (err) {
+						reject(err);
+					} else {
+						resolve(true);
+					}
+				}
+			);
 		});
 	}
 };
