@@ -34,15 +34,17 @@ const UserMapper = {
         })
     },
     // 删除用户
-    del: (data) => {
+    delete: (data) => {
+        console.log("USer删除：",data)
         return new Promise((resolve, reject) => {
-            User.remove({
-                _id: data.id
-            }).then((user) => {
-                resolve(true);
-            }).catch((err) => {
-                reject(err);
-            })
+            User.findByIdAndDelete(data.id, (err, res) => {
+				console.log("Menu删除：", res);
+				if (err) {
+					reject(err);
+				} else {
+					resolve(true);
+				}
+			});
         })
     },
     // 根据手机号查找用户

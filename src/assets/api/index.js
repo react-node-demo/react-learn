@@ -47,10 +47,11 @@ export const getUsers = () => {
 	});
 }
 
-export const deleteUser = () => {
+export const deleteUser = (params) => {
 	return request({
 		url: `/v1/deleteUser`,
-		method: "delete"
+		method: "delete",
+		data: params
 	});
 }
 

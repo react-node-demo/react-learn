@@ -108,6 +108,7 @@ router.get("/v1/getUsers", (request, response) => {
 })
 
 router.delete("/v1/deleteUser", (request, response) => {
+	console.log("delete: ", request.body)
     checkToken(request)
 		.then(() => {
 			UserMapper.delete(request.body)
