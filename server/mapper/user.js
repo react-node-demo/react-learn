@@ -41,7 +41,7 @@ const UserMapper = {
             }).then((user) => {
                 resolve(true);
             }).catch((err) => {
-                reject(false);
+                reject(err);
             })
         })
     },
@@ -56,9 +56,9 @@ const UserMapper = {
                 } else {
                     reject(null)
                 }
-            })
-        }).catch((err)=>{
-          return err;
+            }).catch((err)=>{
+                reject(err)
+              })
         })
     },
     // 根据id查找用户
@@ -71,6 +71,20 @@ const UserMapper = {
                     resolve(user)
                 } else {
                     reject(null)
+                }
+            }).catch((err)=>{
+                reject(err);
+            })
+        })
+    },
+    // 获取所有用户
+    queryUsers: (data) => {
+        return new Promise((resolve, reject)=>{
+            User.find().then((users) => {
+                if (users) {
+                    resolve(users)
+                } else {
+                    reject([])
                 }
             }).catch((err)=>{
                 reject(err);

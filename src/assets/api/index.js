@@ -39,3 +39,33 @@ export const deleteMenu = params => {
 		data: params
 	});
 };
+
+export const getUsers = () => {
+	return request({
+		url: `/v1/getUsers`,
+		method: "get"
+	});
+}
+
+export const deleteUser = () => {
+	return request({
+		url: `/v1/deleteUser`,
+		method: "delete"
+	});
+}
+
+export const updateUser = (params) => {
+	return request({
+		url: `/v1/updateUser`,
+		method: "patch",
+		data: params
+	});
+}
+
+export const createUser = (params) => {
+	return request({
+		url: `/v1/createUser`,
+		method: "post",
+		data: params
+	});
+}

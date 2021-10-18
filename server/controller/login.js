@@ -30,12 +30,20 @@ router.post("/v1/loginWithPassword", async (request, response) => {
 				}
 			})
 			.catch(err => {
-				return response.status(200).json({
+				response.status(200).json({
+					body: null,
 					message: err.toString(),
 					status: 500,
 					success: false
 				});
 			});
+	}).catch((exception) => {
+		response.status(200).json({
+			body: null,
+			message: exception.message.toString(),
+			code: 500,
+			success: false
+		})
 	});
 });
 

@@ -25,15 +25,18 @@ router.get("/v1/refreshToken/:refreshToken", (request, response) => {
 					}
 				})
 				.catch(err => {
+					console.log("err: ", err)
 					response.status(200).json({
-						message: err.toString(),
+						body: null,
+						message: "用户信息获取失败",
 						code: 401,
 						success: false
 					});
 				});
 		})
 		.catch(exception => {
-			return response.status(200).json({
+			response.status(200).json({
+				body: null,
 				message: exception.message.toString(),
 				code: 401,
 				success: false

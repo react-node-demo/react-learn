@@ -7,11 +7,11 @@ import SideMenu from "@/components/sandbox/SideMenu/index";
 import HeaderNav from "@/components/sandbox/HeaderNav/index";
 
 import Home from "@/views/sandbox/home/index";
-import UserList from "@/views/sandbox/user-manage/user-list/index";
-import RoleList from "@/views/sandbox/right-manage/role-list/index";
-import RightList from "@/views/sandbox/right-manage/right-list/index";
+import UserList from "@/views/sandbox/system-manage/user-list/index";
+import RoleList from "@/views/sandbox/system-manage/role-list/index";
+import RightList from "@/views/sandbox/system-manage/right-list/index";
+import MenuList from "@/views/sandbox/system-manage/menu-list";
 import BookList from "@/views/sandbox/book-manage/book-list";
-import MenuList from "@/views/sandbox/right-manage/menu-list";
 
 import { getUserInfo, getMenus } from "@/assets/api/index";
 import { generateMenuTree } from '@/assets/utils/index';
@@ -78,16 +78,16 @@ export default function NewsSandBox(props) {
 					<Switch>
 						<Route path="/home" component={props => <Home {...props}></Home>}></Route>
 						<Route
-							path="/user-manage/user/list"
+							path="/system-manage/user/list"
 							component={props => <UserList {...props}></UserList>}
 						></Route>
 						<Route
-							path="/right-manage/role/list"
+							path="/system-manage/role/list"
 							component={props => <RoleList {...props}></RoleList>}
 						></Route>
-						<Route path="/right-manage/menu/list" component={props => <MenuList {...props}></MenuList>}></Route>
+						<Route path="/system-manage/menu/list" component={props => <MenuList {...props}></MenuList>}></Route>
 						<Route
-							path="/right-manage/right/list"
+							path="/system-manage/right/list"
 							component={props => <RightList {...props}></RightList>}
 						></Route>
 						<Route

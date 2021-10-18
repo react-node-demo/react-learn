@@ -190,6 +190,7 @@ router.delete("/v1/deleteMenu", async (request, response) => {
 				})
 				.catch(err => {
 					response.status(200).json({
+						body: null,
 						message: err.toString(),
 						code: 400,
 						success: false
@@ -198,6 +199,7 @@ router.delete("/v1/deleteMenu", async (request, response) => {
 		})
 		.catch(exception => {
 			response.status(200).json({
+				body: null,
 				message: exception.message.toString(),
 				code: 401,
 				success: false
