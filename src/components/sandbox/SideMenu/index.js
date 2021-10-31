@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu } from "antd";
 import { withRouter } from "react-router-dom";
+import { connect } from 'react-redux'
+
+import { updateMenus } from '@/redux/actions/menus'
+
+import { getMenus } from "@/assets/api/index";
+import { generateMenuTree } from '@/assets/utils/index';
 
 import "./index.css";
 
@@ -8,11 +14,27 @@ const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 function SideMenu(props) {
-	const { menus } = props;
+	const [menus, setMenus] = useState(props.menus);
+	
+	useEffect(() => {
+		setMenus(generateMenuTree(props.menus))
+	}, [props.menus])
+	
+	useEffect(() => {
+		getMenus().then(res => {
+			let data = res.data;
+			if (data.success) {
+				const { menus } = data.body;
+
+				props.updateMenus(menus);
+				setMenus(generateMenuTree(menus));
+			}
+		});
+	}, []);
 
 	const renderMenu = (menus) => {
 		return menus.map((item) => item.children ? <SubMenu key={item.url} title={item.title}>
-			{renderMenu(item.children)}
+			{ renderMenu(item.children) }
 		</SubMenu> : <Menu.Item key={item.url} onClick={()=>toTarget(item.url)}>{item.title}</Menu.Item>)
 	}
 
@@ -37,4 +59,11 @@ function SideMenu(props) {
 }
 
 
-export default withRouter(SideMenu);
+export default connect(
+	state => ({
+		menus: state.MenusReducer.menus
+	}),
+	{
+		updateMenus: updateMenus
+	}
+)(withRouter(SideMenu));

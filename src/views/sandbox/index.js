@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import { Switch, Route, Redirect } from "react-router-dom";
 import { Layout } from "antd";
@@ -13,59 +13,17 @@ import RightList from "@/views/sandbox/system-manage/right-list/index";
 import MenuList from "@/views/sandbox/system-manage/menu-list";
 import BookList from "@/views/sandbox/book-manage/book-list";
 
-import { getUserInfo, getMenus } from "@/assets/api/index";
-import { generateMenuTree } from '@/assets/utils/index';
-
 import "./index.css";
 
 const { Content } = Layout;
 
 export default function NewsSandBox(props) {
-	const [userInfo, setUserInfo] = useState(null);
-	const [menus, setMenus] = useState([]);
-
-	useEffect(() => {
-		getUserInfo().then(res => {
-			let data = res.data;
-
-			console.log(data);
-
-			if (data.success) {
-				let result = data.body;
-
-				setUserInfo(result.userInfo);
-			}
-		});
-	}, []);
-
-	useEffect(() => {
-		getMenus().then(res => {
-			let data = res.data;
-			if (data.success) {
-				const { menus } = data.body;
-
-				setMenus(generateMenuTree(menus));
-			}
-			console.log("res: ", res)
-		});
-	}, []);
-
-	const logout = () => {
-		localStorage.removeItem("token");
-		localStorage.removeItem("refresh_token");
-		localStorage.removeItem("expiresTime");
-
-		props.history.replace({
-			pathname: "/login"
-		});
-	};
-
 	return (
 		<Layout>
-			<SideMenu menus={menus}></SideMenu>
+			<SideMenu></SideMenu>
 
 			<Layout className="site-layout">
-				<HeaderNav userInfo={userInfo} logout={logout}></HeaderNav>
+				<HeaderNav></HeaderNav>
 
 				<Content
 					className="site-layout-background"

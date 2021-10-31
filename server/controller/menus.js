@@ -5,7 +5,6 @@ const MenuMapper = require("../mapper/menu");
 const RoleMenuMapper = require("../mapper/role-menu");
 
 const { validateToken } = require("../common/jwt");
-const { request, response } = require("express");
 
 function checkToken(request) {
 	const {
@@ -52,6 +51,7 @@ router.post("/v1/getMenus", async (request, response) => {
 				})
 				.catch(err => {
 					response.status(200).json({
+						body: {},
 						message: err.toString(),
 						code: 401,
 						success: false
@@ -60,6 +60,7 @@ router.post("/v1/getMenus", async (request, response) => {
 		})
 		.catch(exception => {
 			response.status(200).json({
+				body: {},
 				message: exception.message.toString(),
 				code: 401,
 				success: false

@@ -15,6 +15,9 @@ router.post("/v1/loginWithPassword", async (request, response) => {
 						message: "登录成功",
 						status: 200,
 						body: {
+							nickname: user.nickname,
+							telphone: user.telphone,
+							identity: user.identity,
 							token: initToken(user).token,
 							refresh_token: initToken(user).refresh_token,
 							expiresTime: JWT_EXPIRES

@@ -1,53 +1,39 @@
 import React, { useState, useEffect } from "react";
+import { connect } from 'react-redux'
+
 import { Button, Table, Space, Modal, Form, Input, Switch, Dropdown, Menu, Tag, message } from "antd";
 import { DownOutlined, DeleteOutlined, AppstoreAddOutlined, EditOutlined } from "@ant-design/icons";
 
-import { getMenus, createMenu, updateMenu, deleteMenu } from "@/assets/api/index";
-import { generateMenuTree } from "@/assets/utils/index";
+import { updateMenus, delMenu, editMenu } from '@/redux/actions/menus'
 
-export default function MenuList() {
+import { createMenu, updateMenu, deleteMenu } from "@/assets/api/index";
+import { generateMenuTree, generateUUID } from "@/assets/utils/index";
+
+function MenuList(props) {
 	const [modalVisible, setModalViaible] = useState(false);
 	const [modalTitle, setModalTitle] = useState("新增根菜单");
 	const [menuItem, setMenuItem] = useState(null);
 	const [editType, setEditType] = useState(0);
-	const [menus, setMenus] = useState([]);
+	const [menus, setMenus] = useState(props.menus);
+	
+	const [form] = Form.useForm();
 
 	let inputMenu = {};
 
 	useEffect(() => {
-		fetchMenus();
-	}, []);
+		props.menus.forEach((item) => {
+			item.key = item.id
+		})
+		
+		setMenus(generateMenuTree(props.menus))
+	}, [props.menus]);
 
-	const [form] = Form.useForm();
-
-	const fetchMenus = () => {
-		getMenus().then(res => {
-			let data = res.data;
-			if (data.success) {
-				const { menus } = data.body;
-
-				let menuTree = menus.map((item, index) => {
-					return {
-						key: item.id,
-						id: item.id,
-						parentId: item.parentId,
-						name: item.title,
-						path: item.url,
-						icon: item.icon,
-						component: item.component,
-						visible: item.visible,
-						disabled: item.disabled
-					};
-				});
-				setMenus(generateMenuTree(menuTree));
-			}
-		});
-	};
 
 	const submit = () => {
 		if (!editType) {
 			// 添加根菜单
 			let params = {
+				id: generateUUID(16),
 				parentId: 0,
 				name: inputMenu.name,
 				icon: inputMenu.icon,
@@ -61,8 +47,8 @@ export default function MenuList() {
 				let data = res.data;
 
 				if (data.success) {
-					fetchMenus();
 					message.success("创建成功");
+					props.updateMenus([...menus, params])
 				} else {
 					message.error("创建失败");
 				}
@@ -72,6 +58,7 @@ export default function MenuList() {
 		if (editType === 1) {
 			// 添加子菜单
 			let params = {
+				id: generateUUID(16),
 				parentId: menuItem.id,
 				name: inputMenu.name,
 				icon: inputMenu.icon,
@@ -85,8 +72,8 @@ export default function MenuList() {
 				let data = res.data;
 
 				if (data.success) {
-					fetchMenus();
 					message.success("创建成功");
+					props.updateMenus([...menus, params])
 				} else {
 					message.error("创建失败");
 				}
@@ -97,6 +84,7 @@ export default function MenuList() {
 			// 编辑菜单
 			let params = {
 				id: menuItem.id,
+				parentId: menuItem.parentId,
 				name: inputMenu.name,
 				icon: inputMenu.icon,
 				path: inputMenu.path,
@@ -109,8 +97,8 @@ export default function MenuList() {
 				let data = res.data;
 
 				if (data.success) {
-					fetchMenus();
 					message.success("更新成功");
+					props.editMenu([...menus, params])
 				} else {
 					message.error("更新失败");
 				}
@@ -150,7 +138,7 @@ export default function MenuList() {
 
 			if (data.success) {
 				message.success("删除成功");
-				fetchMenus();
+				props.delMenu(item);
 			} else {
 				message.error("删除失败");
 			}
@@ -184,17 +172,17 @@ export default function MenuList() {
 		console.log("menuI: ", inputMenu, e);
 	};
 
-	const updateForm = () => {
-		if (menuItem) {
-			form.setFieldsValue(menuItem);
-		} else {
-			form.resetFields();
-		}
-	};
-
 	useEffect(() => {
+		const updateForm = () => {
+			if (menuItem) {
+				form.setFieldsValue(menuItem);
+			} else {
+				form.resetFields();
+			}
+		};
+		
 		updateForm();
-	}, [menuItem]); // 副作用依赖menuItem,当更新完数据后拿到最新的值更新表单
+	}, [menuItem, form]); // 副作用依赖menuItem,当更新完数据后拿到最新的值更新表单
 
 	const columns = [
 		{
@@ -334,3 +322,14 @@ export default function MenuList() {
 		</div>
 	);
 }
+
+export default connect(
+	state => ({
+		menus: state.MenusReducer.menus
+	}),
+	{
+		updateMenus: updateMenus,
+		delMenu: delMenu,
+		editMenu: editMenu
+	}
+)(MenuList)

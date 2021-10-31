@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { connect } from 'react-redux'
 
 import { Input, Button, message, Select } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+
+import { updateUserInfo } from '@/redux/actions/user'
 
 import { loginWithPassword, registerWithPassword } from "@/assets/api/login";
 
@@ -11,7 +14,7 @@ import "./index.css";
 
 const { Option } = Select;
 
-export default function Login(props) {
+function Login(props) {
 	const [nickname, setNickname] = useState("");
 	const [telphone, setTelphone] = useState("");
 	const [password, setPassword] = useState("");
@@ -73,11 +76,20 @@ export default function Login(props) {
 			let data = res.data;
 
 			if (data.success) {
-				const { token, refresh_token, expiresTime } = data.body;
+				const { token, refresh_token, expiresTime, nickname, telphone, identity } = data.body;
 
-				localStorage.setItem("token", token);
-				localStorage.setItem("refresh_token", refresh_token);
-				localStorage.setItem("expiresTime", expiresTime + new Date().getTime());
+				props.updateUserInfo({
+					nickname: nickname,
+					telphone: telphone,
+					identity: identity,
+					token: token,
+					refresh_token: refresh_token,
+					expiresTime: expiresTime + new Date().getTime()
+				})
+
+				// localStorage.setItem("token", token);
+				// localStorage.setItem("refresh_token", refresh_token);
+				// localStorage.setItem("expiresTime", expiresTime + new Date().getTime());
 
 				props.history.push({
 					pathname: "/"
@@ -213,3 +225,10 @@ export default function Login(props) {
 		</div>
 	);
 }
+
+export default connect(
+	null,
+	{
+		updateUserInfo: updateUserInfo
+	}
+)(Login)

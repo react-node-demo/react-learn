@@ -1,25 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu, Button, Dropdown, Avatar } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined, UserOutlined } from "@ant-design/icons";
+import { connect } from 'react-redux'
+import { withRouter } from "react-router-dom";
+
+import { clearUserInfo } from '@/redux/actions/user'
 
 import './index.css';
 
 const { Header } = Layout;
 
-export default function HeaderNav(props) {
+function HeaderNav(props) {
+	const [userInfo, setUserInfo] = useState(props.userInfo);
 	const [collapsed, setCollapsed] = useState(false);
 
-	const { userInfo } = props;
+	useEffect(() => {
+		setUserInfo(props.userInfo)
+	}, [props.userInfo])
 
 	const changeCollapsed = () => {
 		setCollapsed(!collapsed);
+	};
+
+	// 退出登录
+	const logout = () => {
+		props.clearUserInfo();
+
+		props.history.replace({
+			pathname: "/login"
+		});
 	};
 
 	const menu = (
 		<Menu>
 			<Menu.Item key="1">超级管理员</Menu.Item>
 			<Menu.Item danger key="2">
-				<Button type="text" onClick={props.logout}>
+				<Button type="text" onClick={logout}>
 					退出登录
 				</Button>
 			</Menu.Item>
@@ -47,3 +63,12 @@ export default function HeaderNav(props) {
 		</Header>
 	);
 }
+
+export default connect(
+	state => ({
+		userInfo: state.UserReducer.userInfo
+	}),
+	{
+		clearUserInfo: clearUserInfo
+	}
+)(withRouter(HeaderNav))

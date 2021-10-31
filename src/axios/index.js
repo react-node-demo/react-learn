@@ -1,6 +1,7 @@
 import axios from "axios";
+
 import { refreshToken } from "@/assets/api/login";
-import { message } from "antd";
+import store from "../redux/store";
 
 // 是否正在刷新的标记
 let isRefreshing = false;
@@ -15,9 +16,11 @@ const service = axios.create({
 
 service.interceptors.request.use(
 	async config => {
-		if (localStorage.getItem("token")) {
-			config.headers["refresh-token"] = localStorage.getItem("token");
-			config.headers["Authorization"] = "Bearer " + localStorage.getItem("token");
+		const { userInfo } = store.getState().UserReducer;
+
+		if (userInfo && userInfo.refresh_token) {
+			config.headers["refresh-token"] = userInfo.refresh_token;
+			config.headers["Authorization"] = "Bearer " + userInfo.token;
 		}
 
 		return config;
@@ -30,6 +33,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
 	response => {
 		console.log("axios: ", response.data);
+		const { userInfo } = store.getState().UserReducer;
 		const { data, config } = response;
 
 		switch (data.code) {
@@ -37,18 +41,21 @@ service.interceptors.response.use(
 				if (!isRefreshing) {
 					isRefreshing = true;
 
-					return refreshToken(localStorage.getItem("refresh_token"))
+					return refreshToken(userInfo.refresh_token)
 						.then(res => {
 							let data = res.data;
-
-							console.log("刷新token: ", data);
 
 							if (data.success) {
 								const { token, refresh_token, expiresTime } = data.body;
 
-								localStorage.setItem("token", token);
-								localStorage.setItem("refresh_token", refresh_token);
-								localStorage.setItem("expiresTime", expiresTime + new Date().getTime());
+								store.dispatch({ 
+									type: 'update_userInfo', 
+									payload: {
+										token: token,
+										refresh_token: refresh_token,
+										expiresTime: expiresTime
+									} 
+								})
 
 								//遍历缓存队列 发起请求 传入最新token
 								retryRequests.forEach(cb => cb(token, refresh_token));
@@ -57,9 +64,9 @@ service.interceptors.response.use(
 
 								return service(config);
 							} else {
-								localStorage.removeItem("token");
-								localStorage.removeItem("refresh_token");
-								localStorage.removeItem("expiresTime");
+								store.dispatch({
+									type: 'clear_userInfo'
+								})
 
 								window.location.reload();
 							}
@@ -81,7 +88,6 @@ service.interceptors.response.use(
 						});
 					});
 				}
-				break;
 			default:
 				break;
 		}

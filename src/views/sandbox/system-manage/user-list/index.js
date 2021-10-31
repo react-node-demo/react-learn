@@ -28,7 +28,11 @@ export default function UserList() {
 			if (data.success) {
 				const { users } = data.body;
 
-				console.log("users: ", users)
+				users.forEach((item) => {
+					item.key = item.id
+				})
+
+				// console.log("users: ", users)
 				setUsers(users);
 			}
 		});
